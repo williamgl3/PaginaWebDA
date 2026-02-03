@@ -1,57 +1,18 @@
 <template>
-  <div class="agenda">
+  <div>
     <h2>Agenda de citas</h2>
-
-    <form @submit.prevent="agendarCitas" class="form">
-      <input :type="date" v-model="nuevaCita.fecha" required />
-      <input :type="time" v-model="nuevaCita.hora" required />
-      <input type="text" v-model="nuevaCita.paciente" placeholder="Nombre del paciente" required />
-      <textarea v-model="nuevaCita.motivo" placeholder="Motivo de la cita"></textarea>
-
-      <button type="submit">Agendar cita</button>
-    </form>
-
-    <h3>Citas agendadas</h3>
-    <p v-if="citas.length === 0">No hay citas agendadas.</p>
+    <input v-model="cita.fecha" type="date" />
+    <input v-model="cita.hora" type="time" />
+    <button @click="crear">Agendar</button>
 
     <ul>
-      <li v-for="(cita, index) in citas" :key="index">
-        <strong>{{ cita.fecha }} {{ cita.hora }}</strong
-        ><br />
-        Paciente: {{ cita.paciente }}<br />
-        Motivo: {{ cita.motivo || 'No especificado' }}
-      </li>
+      <li v-for="c in citas" :key="c_id">{{ c.fecha }} {{ c.hora }}</li>
     </ul>
   </div>
 </template>
-<script>
-export default {
-  name: 'AgendaCitas',
-  data() {
-    return {
-      nuevaCita: {
-        fecha: '',
-        hora: '',
-        paciente: '',
-        motivo: '',
-      },
-      citas: [],
-    }
-  },
-  methods: {
-    agendarCitas() {
-      this.citas.push({ ...this.nuevaCita })
-      this.nuevaCita = {
-        fecha: '',
-        hora: '',
-        paciente: '',
-        motivo: '',
-      }
-    },
-  },
-}
-</script>
-
+<> export default { data() { return { cita: {}, citas: [] } }, async mounted() { const res = await
+fetch("http://localhost:3000/api/appointments", { headers: { Authorization:
+localStorage.getItem("token")} }) this.citas = await res.json() },
 <style scoped>
 .agenda {
   max-width: 600px;
