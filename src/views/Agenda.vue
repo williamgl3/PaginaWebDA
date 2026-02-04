@@ -6,35 +6,36 @@
     <button @click="crear">Agendar</button>
 
     <ul>
-      <li v-for="c in citas" :key="c_id">{{ c.fecha }} {{ c.hora }}</li>
+      <li v-for="c in citas" :key="c._id">{{ c.fecha }} - {{ c.hora }}</li>
     </ul>
   </div>
 </template>
-<> export default { data() { return { cita: {}, citas: [] } }, async mounted() { const res = await
-fetch("http://localhost:3000/api/appointments", { headers: { Authorization:
-localStorage.getItem("token")} }) this.citas = await res.json() },
-<style scoped>
-.agenda {
-  max-width: 600px;
-  margin: auto;
-}
 
-.form {
-  display: grid;
-  gap: 10px;
-  margin-bottom: 20px;
+<script>
+export default {
+  name: 'AgendaCitas',
+  data() {
+    return { cita: {}, citas: [] }
+  },
+  async mounted() {
+    const res = await fetch('http://localhost:3000/api/appointments', {
+      headers: { Authorization: localStorage.getItem('token') },
+    })
+    this.citas = await res.json()
+  },
+  methods: {
+    async crear() {
+      await fetch('http://localhost:3000/api/appointments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: localStorage.getItem('token'),
+        },
+        body: JSON.stringify(this.cita),
+      })
+      alert('Cita agendada exitosamente')
+      location.reload()
+    },
+  },
 }
-
-input,
-textarea,
-button {
-  padding: 10px;
-}
-
-button {
-  background-color: #2563eb;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-</style>
+</script>
